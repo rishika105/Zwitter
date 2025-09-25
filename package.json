@@ -3,17 +3,25 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node dist/index.js",
+    "dev": "tsc-watch --onSuccess \"npm start\""
   },
   "author": "",
   "license": "ISC",
+  "type": "module",
   "description": "",
   "dependencies": {
+    "@apollo/server": "^5.0.0",
+    "@as-integrations/express5": "^1.1.2",
+    "@types/express": "^5.0.3",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
+    "graphql": "^16.11.0",
     "nodemon": "^3.1.10"
   },
   "devDependencies": {
+    "tsc-watch": "^7.1.1",
     "typescript": "^5.9.2"
   }
 }
