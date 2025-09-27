@@ -5,4 +5,9 @@ export const mutations = `#graphql
       email: String!
       password: String!
     ): User
+
+    loginUser(
+      email: String!
+      password: String!
+    )
 `;
