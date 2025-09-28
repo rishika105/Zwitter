@@ -11,4 +11,5 @@ export const typeDefs = `#graphql
     token: String!
     user: User
   }
+    
 `;

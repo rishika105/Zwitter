@@ -9,6 +9,8 @@ import UserService from "./services/userService.js";
 import { GraphQLError } from "graphql";
 import { prisma } from "./lib/db.js";
 import cors from "cors";
+import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
+import { cloudinaryConnect } from "./lib/cloudinary.js";
 
 async function init() {
   const app = express();
@@ -16,6 +18,9 @@ async function init() {
 
   app.use(express.json());
   app.use(cors());
+  // Enable file upload parsing
+  app.use(graphqlUploadExpress()); // ✅ Important
+  cloudinaryConnect();
 
   app.get("/", (req, res) => {
     res.json({ message: "Server is up and running" });
@@ -32,16 +37,12 @@ async function init() {
       context: async ({ req }) => {
         const authHeader = req.headers.authorization || "";
         const token = authHeader.replace("Bearer ", "");
-
         try {
-          if (token) {
-            const user = await UserService.decodejwtToken(token);
-            return { user };
-          }
-          return { user: null };
-        } catch (error) {
-          // Return null user if token is invalid
-          return { user: null };
+          const user = await UserService.decodejwtToken(token);
+          // console.log(user);
+          return { user };
+        } catch (err) {
+          return null;
         }
       },
     })

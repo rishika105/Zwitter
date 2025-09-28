@@ -1,6 +1,5 @@
 import { GraphQLError } from "graphql";
 
-
 interface UserTypeMiddleware {
   id: string;
   email: string;

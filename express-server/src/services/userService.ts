@@ -116,7 +116,7 @@ class UserService {
             expiresIn: "90d",
           }
         );
-        return {token, user};
+        return { token, user };
       } else {
         //password do not match
         throw new GraphQLError("Password is incorrect please try again.", {
