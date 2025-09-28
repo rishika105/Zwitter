@@ -10,8 +10,16 @@ export const REGISTER_MUTATION = gql`
   }
 `;
 
-export const GET_USER_TOKEN_QUERY = gql`
-    query Login($email: String!, $password: String!){
-        getUserToken(email: $email, password: $password)
+export const LOGIN_USER = gql`
+    mutation Login($email: String!, $password: String!){
+        loginUser(email: $email, password: $password){
+          token
+          user {
+            firstName,
+            lastName,
+            email,
+            profileImageURL
+          }
+        }
     }
 `

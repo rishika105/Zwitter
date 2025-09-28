@@ -1,13 +1,38 @@
 import { useForm } from "react-hook-form";
-import { GET_USER_TOKEN_QUERY } from "../mutations/user";
-import { useMutation, useQuery } from "@apollo/client/react";
+import { LOGIN_USER } from "../mutations/user";
+import { useMutation } from "@apollo/client/react";
 import { useDispatch } from "react-redux";
 import { setToken } from "../slices/authSlice";
+import toast from "react-hot-toast";
+import { setUser } from "../slices/profileSlice";
 
 interface LoginFormInputs {
   email: string;
   password: string;
 }
+
+interface LoginResponse {
+  loginUser: {
+    token: string;
+    user: {
+      id: string;
+      firstName: string;
+      email: string;
+    };
+  };
+}
+
+
+// {
+//   "data": {
+//     "loginUser": {
+//       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXk",
+//       "user": {
+//         "firstName": "Vijay"
+//       }
+//     }
+//   }
+// }  //reponse format
 
 export const Login: React.FC = () => {
   const dispatch = useDispatch();
@@ -17,12 +42,21 @@ export const Login: React.FC = () => {
     formState: { errors },
   } = useForm<LoginFormInputs>();
 
-
-  const [loginUser, { loading, error }] = useQuery<string, LoginFormInputs>(GET_USER_TOKEN_QUERY, {
+  const [loginUser, { loading, error }] = useMutation<
+    LoginResponse,
+    LoginFormInputs
+  >(LOGIN_USER, {
     onCompleted: (data) => {
-      const token: string = data; // depends on your mutation field name
+      const token = data.loginUser.token;
+      const user = data.loginUser.user;
+      toast.success("Login success!");
+
       dispatch(setToken(token));
-      localStorage.setItem("token", token);
+      localStorage.setItem("Tweettoken", token);
+
+      // If you want to store user
+      dispatch(setUser(user));
+      localStorage.setItem("TweetUser", JSON.stringify(user));
     },
   });
 

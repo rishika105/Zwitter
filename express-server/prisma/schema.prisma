@@ -14,12 +14,49 @@ datasource db {
 }
 
 model User {
-  id String @id @default(uuid())
-  firstName String @map("first_name")
-  lastName String @map("last_name")
+  id              String  @id @default(uuid())
+  firstName       String  @map("first_name")
+  lastName        String  @map("last_name")
   profileImageURL String? @map("profile_image_url")
-  email String @unique
-  password String 
+  email           String  @unique
+  password        String
+  Post            Post[]
 
   @@map("users")
+}
+
+model Post {
+  id           String    @id @default(uuid())
+  content      String
+  postImageURL String?   @map("post_image_url")
+  createdAt    DateTime  @default(now())
+  user         User      @relation(fields: [userId], references: [id])
+  userId       String
+  likes        Like[]
+  comments     Comment[]
+
+  @@map("posts")
+}
+
+model Like {
+  id      String  @id @default(uuid())
+  userId  String
+  tweetId String
+  Post    Post?   @relation(fields: [postId], references: [id])
+  postId  String?
+}
+
+model Comment {
+  id      String  @id @default(uuid())
+  content String
+  userId  String
+  tweetId String
+  Post    Post?   @relation(fields: [postId], references: [id])
+  postId  String?
+}
+
+model Follower {
+  id          String @id @default(uuid())
+  followerId  String
+  followingId String
 }

@@ -9,17 +9,27 @@ interface SignupFormInputs {
   lastName: string;
   email: string;
   password: string;
+  profileImageURL: string;
 }
 
 interface RegisterResponse {
-  register: {
+  createUser: {
     User: {
       firstName: string;
       lastName: string;
       email: string;
+      profileImagURL: string;
     };
   };
 }
+
+// {
+//   "data": {
+//     "createUser": {
+//       "email": "dbbgdgsg@hamuicikk"
+//     }
+//   }
+// } //reponse format
 
 export const Signup: React.FC = () => {
 
@@ -100,6 +110,11 @@ export const Signup: React.FC = () => {
         {errors.password && (
           <p className="text-red-500">{errors.password.message}</p>
         )}
+      </div>
+
+      <div className="mb-3">
+        <label>Profile Image Upload</label>
+          
       </div>
 
       <button

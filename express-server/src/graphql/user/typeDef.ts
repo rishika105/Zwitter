@@ -6,4 +6,9 @@ export const typeDefs = `#graphql
     email: String!
     profileImageURL: String
   }
+
+  type LoginObj {
+    token: String!
+    user: User
+  }
 `;

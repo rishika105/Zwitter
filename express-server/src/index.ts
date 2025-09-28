@@ -8,7 +8,7 @@ import { createApolloGraphqlServer } from "./graphql/index.js";
 import UserService from "./services/userService.js";
 import { GraphQLError } from "graphql";
 import { prisma } from "./lib/db.js";
-import cors from "cors"
+import cors from "cors";
 
 async function init() {
   const app = express();
@@ -25,6 +25,7 @@ async function init() {
   //before going to the graphql server
   //it will go in the context and whatever returned can be used in all routes
   //like auth middlware for authorization
+  // server.ts - improve context handling
   app.use(
     "/graphql",
     expressMiddleware(await createApolloGraphqlServer(), {
@@ -32,8 +33,16 @@ async function init() {
         const authHeader = req.headers.authorization || "";
         const token = authHeader.replace("Bearer ", "");
 
-        const user = UserService.decodejwtToken(token);
-        return { user };
+        try {
+          if (token) {
+            const user = await UserService.decodejwtToken(token);
+            return { user };
+          }
+          return { user: null };
+        } catch (error) {
+          // Return null user if token is invalid
+          return { user: null };
+        }
       },
     })
   );
