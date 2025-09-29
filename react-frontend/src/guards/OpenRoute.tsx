@@ -1,14 +1,11 @@
-import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import type { PrivateRouteProps } from "./PrivateRoute";
+import { GetToken } from "../lib/getToken";
 
 function OpenRoute({ children }: PrivateRouteProps) {
-  const token = useSelector(
-    (state: { auth: { token: string | null } }) => state.auth.token
-  );
-
+  const token = GetToken();
   if (token !== null) {
-    return <Navigate to="/my-todos" replace />;
+    return <Navigate to="/home" replace />;
   }
 
   return children;

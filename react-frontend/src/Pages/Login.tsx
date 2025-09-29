@@ -22,7 +22,6 @@ interface LoginResponse {
   };
 }
 
-
 // {
 //   "data": {
 //     "loginUser": {

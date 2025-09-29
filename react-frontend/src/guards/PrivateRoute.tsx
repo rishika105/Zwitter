@@ -1,18 +1,15 @@
 import type { ReactNode } from "react";
-import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
+import { GetToken } from "../lib/getToken";
 
 export interface PrivateRouteProps {
   children: ReactNode;
 }
 
 const PrivateRoute = ({ children }: PrivateRouteProps) => {
-  const token = useSelector(
-    (state: { auth: { token: string | null } }) => state.auth.token
-  );
-
+  const token = GetToken();
   if (token !== null) return children;
-  else return <Navigate to="/" />;
+  else return <Navigate to="/login" />;
 };
 
 export default PrivateRoute;
