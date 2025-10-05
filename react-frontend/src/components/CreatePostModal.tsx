@@ -8,67 +8,93 @@ interface PostFormInputs {
   postImageFile?: FileList;
 }
 
-// {
-//   "data": {
-//     "createPost": {
-//       "content": "My second post by niya ",
-//       "postImageFile": null,
-//       "user": {
-//         "firstName": "Vijay"
-//       }
-//     }
-//   }
-// }     //response format
-
 const CreatePostModal = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<PostFormInputs>();
 
-  const [createPost, { loading, error }] = useMutation<
-    PostFormInputs,
-    PostFormInputs
-  >(POST_MUTATION, {
+  const [createPost, { loading, error }] = useMutation(POST_MUTATION, {
     onCompleted: (data) => {
       console.log(data);
       toast.success("Posted successfully");
+      reset();
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error("Failed to create post");
     },
   });
 
-  const onSubmit = (formData: PostFormInputs) => {
-    // ✅ Extract first file manually
-    const file: File | null = formData.postImageFile?.item(0) ?? null;
-
-    createPost({
-      variables: {
+  const onSubmit = async (formData: PostFormInputs) => {
+    try {
+      const variables: any = {
         content: formData.content,
-        postImageFile: file,
-      },
-    });
+      };
+
+      // Only include postImageFile if a file was actually selected
+      if (formData.postImageFile && formData.postImageFile.length > 0) {
+        variables.postImageFile = formData.postImageFile[0];
+      } else {
+        // Don't include the variable at all if no file is selected
+        // This prevents sending an empty object
+        variables.postImageFile = null;
+      }
+
+      await createPost({
+        variables,
+      });
+    } catch (err) {
+      console.error("Error creating post:", err);
+    }
   };
+
   return (
     <div className="bg-neutral-200 backdrop-blur-0 h-[60%] w-[90%] absolute top-0 right-0">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <label htmlFor="content">What's Happening?</label>
+        <label
+          htmlFor="content"
+          className="block text-sm font-medium text-gray-700"
+        >
+          What's Happening?
+        </label>
         <textarea
           {...register("content", { required: "You need to write something" })}
-          className="bg-gray-600"
+          className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+          rows={4}
         />
         {errors.content && (
-          <p className="text-red-500">{errors.content.message}</p>
+          <p className="text-red-500 text-sm mt-1">{errors.content.message}</p>
         )}
 
-        <label htmlFor="postImageFile">Upload Image(optional)</label>
-        <input type="file" {...register("postImageFile")} />
+        <label
+          htmlFor="postImageFile"
+          className="block text-sm font-medium text-gray-700 mt-4"
+        >
+          Upload Image (optional)
+        </label>
+        <input
+          type="file"
+          {...register("postImageFile")}
+          accept="image/*"
+          className="mt-1 block w-full"
+        />
 
-        <button disabled={loading}>
-          {" "}
-          {loading ? "Posting" : "Create post +"}{" "}
+        <button
+          type="submit"
+          disabled={loading}
+          className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:bg-gray-400"
+        >
+          {loading ? "Posting..." : "Create post +"}
         </button>
-        {/* error from server */}
-        {error && <p className="text-red-500 mt-2">{error.message}</p>}
+
+        {error && (
+          <p className="text-red-500 mt-2 text-sm">
+            {error.message || "An error occurred while creating the post"}
+          </p>
+        )}
       </form>
     </div>
   );
